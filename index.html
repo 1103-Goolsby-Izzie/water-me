@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+    <title>🌿 Plant Monitor 🌿</title>
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+  <h1>🌿 Plant Monitor 🌿</h1>
+  <p>Hey, this is just for you, so you can remember to water your plants! I know you forget to water them from time to time, and that although you love plants, you can never keep them alive because you forget to water them all the time. So I made this to last all year long without so much as a battery change, and I created this website to allow you to observe live soil updates!</p>
+  <br><br>
+  <p>This button is for live monitoring. Press the button to retrieve a live update!</p>
+  <button type="button" onclick="getLiveUpdate()">
+    Update Arduino now
+  </button>
+  <p id="liveStatusDisplay" style="font-weight: bold; color: green; margin-top: 10px;"></p>  <br><br>
+  <p>If you sign up for notifications with your email below, you will receive updates for when it needs watering or when it is being overwatered. Type your desired email below to recieve email updates!</p>
+  <br>
+  <input type="email" id="userEmail" placeholder="Enter email...">
+  <br>
+  <button type="button" onclick="submitEmail()">
+    Confirm
+  </button>
+  <br>
+  <p>If you or someone else decides to unsubscribe, you can easily unsubscribe here.</p>
+  <br>
+  <button type="button" onclick="unsubscribeEmail()" style="background-color: #ffcccc; margin-top: 10px;">
+    Unsubscribe
+  </button>
+  <img src="plant.png" alt="Aloe vera plant" class="plant-img">
+
+  <script>
+    //Firebase - 1
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXfWdQQdI9ch8HnUNOnt6w4ZlUdX3ifmo",
+      authDomain: "plant-monitor-f96de.firebaseapp.com",
+      databaseURL: "https://plant-monitor-f96de-default-rtdb.firebaseio.com",
+      projectId: "plant-monitor-f96de",
+      storageBucket: "plant-monitor-f96de.firebasestorage.app",
+      messagingSenderId: "281867460112",
+      appId: "1:281867460112:web:77df3bb276643e1bf6f495"
+    };
+    //Starting up firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    //Starting up EmailJS - 2
+    emailjs.init("qvWKzrt-DtwGPrdn9");
+
+    function getLiveUpdate(){
+      db.ref('PlantStatus').once('value', (snapshot) =>{
+        const status = snapshot.val();
+        document.getElementById("liveStatusDisplay").innerText = "Current Status: " + status;
+      });
+    }
+
+    //To get emails - 3
+    function submitEmail() {
+      var emailInput = document.getElementById("userEmail");
+      var actualEmail = emailInput.value;
+
+      if(actualEmail === ""){
+        alert("Please enter a real email address.")
+      }
+      else{
+        db.ref('Recipients').push(actualEmail);
+        alert("Great! You will now recieve email updates at: " + actualEmail);
+        emailInput.value = "";
+      }
+    }
+
+    //Send Automatic Alert via EmailJS - 4
+    let lastStatus = "";
+    db.ref('PlantStatus').on('value', (snapshot) => {
+      const status = snapshot.val();
+      if(status === "too dry" && lastStatus !== "too dry"){
+        sendAlerts(status);
+      }
+      lastStatus = status;
+    });
+
+    function sendAlerts(currentStatus){
+      db.ref('Recipients').once('value', snapshot => {
+        snapshot.forEach((child) => {
+          const recipientEmail = child.val();
+          emailjs.send("service_f9l9lip", "template_wzu3vpb", {
+            to_email: recipientEmail,
+            status: currentStatus
+          });
+        });
+      });
+    }
+
+    //Unsubscribe from emails using the website - 5
+    //To remove emails
+    function unsubscribeEmail() {
+      var emailInput = document.getElementById("userEmail");
+      var actualEmail = emailInput.value;
+
+      if(actualEmail === ""){
+        alert("Please enter the email you wish to unsubscribe.");
+      }
+      else {
+        // Search for the email in your 'Recipients' list and delete it
+        const ref = db.ref('Recipients');
+        ref.orderByValue().equalTo(actualEmail).once('value', snapshot => {
+          if (snapshot.exists()) {
+            snapshot.forEach(child => child.ref.remove());
+            alert(actualEmail + " has been unsubscribed.");
+          } else {
+            alert("Email not found in our list.");
+          }
+        });
+        emailInput.value = "";
+      }
+    }
+  </script>
+</body>
+</html>
+

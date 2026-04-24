@@ -1,0 +1,68 @@
+body{
+  /*General 'looks' of the website*/
+  text-align: center;
+  background-color: #B5A633;
+  font-family: 'Segoe UI', Tahoma, 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  /*Margins*/
+  padding-top: 50px;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+h1{
+  font-size: 90px;
+  margin-bottom: 30px;
+}
+
+p{
+  font-size: 45px;
+  line-height: 1.5;
+}
+
+/*Button cmds for both buttons*/
+button{
+  text-emphasis-color: #333333;
+  padding: 10px 20px;
+  font-size: 35px;
+  background-color: #6B6115; /*Slightly darker yellow for the button*/
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+button:hover {
+  background-color: #d4bc00;
+}
+
+/*Changes the size of the input Email box larger*/
+input[type="email"] {
+  width: 60%;          /* Makes the box wider across the screen */
+  padding: 30px;       /* Adds "tallness" and space inside the box */
+  font-size: 35px;     /* Makes the text she types much larger */
+  border: 2px solid #6B6115; /* Matches your button color */
+  border-radius: 8px;  /* Rounds the corners */
+  margin-bottom: 20px; /* Adds space before the button starts */
+  outline: none;       /* Clean look when clicking */
+}
+input::placeholder{
+  color: #888888;
+  font-size: 35px;
+}
+
+.plant-img {
+  max-width: 100%; /* Prevents it from being wider than the screen */
+  height: auto;
+  border-radius: 15px; /* Matches your rounded button look */
+  margin-top: 20px;
+}
+
+/*
+img{
+  max-width: 80%;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+Add this in when you've got the images you want to insert (flowers)
+*/
