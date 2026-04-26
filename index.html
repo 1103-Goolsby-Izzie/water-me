@@ -83,11 +83,10 @@
 
       // EMAIL LOGIC:
       // Case 1: Needs Watering -> Send Email
-      if (status === "needs watering" && lastStatus !== "needs watering") {
+      if (status === "Needs watering!!" && lastStatus !== "Needs watering!!") {
           sendAlerts("The plant is thirsty!");
       } 
-      // Case 2: Perfect -> Send Email
-      else if (status === "perfect" && lastStatus !== "perfect") {
+      else if (status === "Perfect!" && lastStatus !== "Perfect!") {
           sendAlerts("The plant is happy and watered!");
       }
       
