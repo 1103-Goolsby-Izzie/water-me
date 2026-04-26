@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-    <title>🌿 Water Me 🌿</title>
+  <title>🌿 Water Me 🌿</title>
   <link rel="stylesheet" href="style.css">
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -77,11 +77,26 @@
     let lastStatus = "";
     db.ref('PlantStatus').on('value', (snapshot) => {
       const status = snapshot.val();
-      if(status === "too dry" && lastStatus !== "too dry"){
-        sendAlerts(status);
+      
+      // The website will ALWAYS show the current status text
+      document.getElementById("liveStatusDisplay").innerText = "Current Status: " + status;
+
+      // EMAIL LOGIC:
+      // Case 1: Needs Watering -> Send Email
+      if (status === "needs watering" && lastStatus !== "needs watering") {
+          sendAlerts("The plant is thirsty!");
+      } 
+      // Case 2: Perfect -> Send Email
+      else if (status === "perfect" && lastStatus !== "perfect") {
+          sendAlerts("The plant is happy and watered!");
       }
-      lastStatus = status;
+      
+      // NOTE: We do NOT add an "else if" for "too wet" here. 
+      // The website will display it, but no email will fire.
+
+      lastStatus = status; 
     });
+
 
     function sendAlerts(currentStatus){
       db.ref('Recipients').once('value', snapshot => {
@@ -121,4 +136,3 @@
   </script>
 </body>
 </html>
-
