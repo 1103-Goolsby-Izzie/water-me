@@ -7,7 +7,6 @@
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
   <h1>🌿 Water Me 🌿</h1>
@@ -18,7 +17,7 @@
     Update Arduino now
   </button>
   <p id="liveStatusDisplay" style="font-weight: bold; color: green; margin-top: 10px;"></p>  <br><br>
-  <p>If you sign up for notifications with your email below, you will receive updates for when it needs watering or when it is being overwatered. Type your desired email below to recieve email updates!</p>
+  <p>If you sign up for notifications with your email below, you will receive updates for when it needs watering or when it is being overwatered. Type your desired email below to receive email updates!</p>
   <br>
   <input type="email" id="userEmail" placeholder="Enter email...">
   <br>
@@ -34,7 +33,7 @@
   <img src="plant.png" alt="Aloe vera plant" class="plant-img">
 
   <script>
-    //Firebase - 1
+    //Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCXfWdQQdI9ch8HnUNOnt6w4ZlUdX3ifmo",
       authDomain: "plant-monitor-f96de.firebaseapp.com",
@@ -44,13 +43,12 @@
       messagingSenderId: "281867460112",
       appId: "1:281867460112:web:77df3bb276643e1bf6f495"
     };
-    //Starting up firebase
+
+    //Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    //Starting up EmailJS - 2
-    emailjs.init("qvWKzrt-DtwGPrdn9");
-
+    // Manual Refresh Function
     function getLiveUpdate(){
       db.ref('PlantStatus').once('value', (snapshot) =>{
         const status = snapshot.val();
@@ -58,7 +56,7 @@
       });
     }
 
-    //To get emails - 3
+    // Subscribe Function: Adds email to Firebase for the Google Script to find
     function submitEmail() {
       var emailInput = document.getElementById("userEmail");
       var actualEmail = emailInput.value;
@@ -68,49 +66,19 @@
       }
       else{
         db.ref('Recipients').push(actualEmail);
-        alert("Great! You will now recieve email updates at: " + actualEmail);
+        alert("Great! You will now receive email updates at: " + actualEmail);
         emailInput.value = "";
       }
     }
 
-    //Send Automatic Alert via EmailJS - 4
-    let lastStatus = "";
+    // Live Update Logic: Updates the text on screen automatically when Firebase changes
     db.ref('PlantStatus').on('value', (snapshot) => {
       const status = snapshot.val();
-      
-      // The website will ALWAYS show the current status text
       document.getElementById("liveStatusDisplay").innerText = "Current Status: " + status;
-
-      // EMAIL LOGIC:
-      // Case 1: Needs Watering -> Send Email
-      if (status === "Needs watering!!" && lastStatus !== "Needs watering!!") {
-          sendAlerts("The plant is thirsty!");
-      } 
-      else if (status === "Perfect!" && lastStatus !== "Perfect!") {
-          sendAlerts("The plant is happy and watered!");
-      }
-      
-      // NOTE: We do NOT add an "else if" for "too wet" here. 
-      // The website will display it, but no email will fire.
-
-      lastStatus = status; 
+      // Note: No 'sendAlerts' here anymore. The Google Script handles the emailing logic.
     });
 
-
-    function sendAlerts(currentStatus){
-      db.ref('Recipients').once('value', snapshot => {
-        snapshot.forEach((child) => {
-          const recipientEmail = child.val();
-          emailjs.send("service_f9l9lip", "template_wzu3vpb", {
-            to_email: recipientEmail,
-            status: currentStatus
-          });
-        });
-      });
-    }
-
-    //Unsubscribe from emails using the website - 5
-    //To remove emails
+    // Unsubscribe Function
     function unsubscribeEmail() {
       var emailInput = document.getElementById("userEmail");
       var actualEmail = emailInput.value;
@@ -119,7 +87,6 @@
         alert("Please enter the email you wish to unsubscribe.");
       }
       else {
-        // Search for the email in your 'Recipients' list and delete it
         const ref = db.ref('Recipients');
         ref.orderByValue().equalTo(actualEmail).once('value', snapshot => {
           if (snapshot.exists()) {
