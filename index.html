@@ -12,12 +12,9 @@
   <h1>🌿 Water Me 🌿</h1>
   <p>Hey, this is just for you, so you can remember to water your plants! I know you forget to water them from time to time, and that although you love plants, you can never keep them alive because you forget to water them all the time. So I made this to last all year long without so much as a battery change, and I created this website to allow you to observe live soil updates!</p>
   <br><br>
-  <p>This button is for live monitoring. Press the button to retrieve a live update!</p>
-  <button type="button" onclick="getLiveUpdate()">
-    Update Arduino now
-  </button>
+  <p>This is for you to see the most recent update from the sensor.</p>
   <p id="liveStatusDisplay" style="font-weight: bold; color: green; margin-top: 10px;"></p>  <br><br>
-  <p>If you sign up for notifications with your email below, you will receive updates for when it needs watering or when it is being overwatered. Type your desired email below to receive email updates!</p>
+  <p>If you sign up for notifications with your email below, you will receive updates for when it needs watering, when it is being overwatered, or if it's perfect. You'll receive these notifications periodically throughout the day, but you can also check our website to see updates. Type your desired email below to receive email updates!</p>
   <br>
   <input type="email" id="userEmail" placeholder="Enter email...">
   <br>
@@ -25,7 +22,7 @@
     Confirm
   </button>
   <br>
-  <p>If you or someone else decides to unsubscribe, you can easily unsubscribe here.</p>
+  <p>If you or someone else decides to unsubscribe, you can easily unsubscribe here. Please enter the email you wish to unsubscribe into the text box. Then press the button as confirmation.</p>
   <br>
   <button type="button" onclick="unsubscribeEmail()" style="background-color: #ffcccc; margin-top: 10px;">
     Unsubscribe
@@ -48,16 +45,8 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Manual Refresh Function
-    function getLiveUpdate(){
-      db.ref('PlantStatus').once('value', (snapshot) =>{
-        const status = snapshot.val();
-        document.getElementById("liveStatusDisplay").innerText = "Current Status: " + status;
-      });
-    }
-
-    // Subscribe Function: Adds email to Firebase for the Google Script to find
-    function submitEmail() {
+    //Subscribe Function: Adds email to Firebase for Google Script
+    function submitEmail(){
       var emailInput = document.getElementById("userEmail");
       var actualEmail = emailInput.value;
 
@@ -71,28 +60,28 @@
       }
     }
 
-    // Live Update Logic: Updates the text on screen automatically when Firebase changes
+    //Live Update Logic: Updates the text on screen automatically when Firebase changes
     db.ref('PlantStatus').on('value', (snapshot) => {
       const status = snapshot.val();
       document.getElementById("liveStatusDisplay").innerText = "Most Recent Update (in the last 6 hours): " + status;
-      // Note: No 'sendAlerts' here anymore. The Google Script handles the emailing logic.
     });
 
-    // Unsubscribe Function
-    function unsubscribeEmail() {
+    //Unsubscribing to receiving email updates
+    function unsubscribeEmail(){
       var emailInput = document.getElementById("userEmail");
       var actualEmail = emailInput.value;
 
       if(actualEmail === ""){
         alert("Please enter the email you wish to unsubscribe.");
       }
-      else {
+      else{
         const ref = db.ref('Recipients');
         ref.orderByValue().equalTo(actualEmail).once('value', snapshot => {
-          if (snapshot.exists()) {
+          if(snapshot.exists()){
             snapshot.forEach(child => child.ref.remove());
             alert(actualEmail + " has been unsubscribed.");
-          } else {
+          }
+          else{
             alert("Email not found in our list.");
           }
         });
