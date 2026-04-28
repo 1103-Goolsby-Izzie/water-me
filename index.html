@@ -74,7 +74,7 @@
     // Live Update Logic: Updates the text on screen automatically when Firebase changes
     db.ref('PlantStatus').on('value', (snapshot) => {
       const status = snapshot.val();
-      document.getElementById("liveStatusDisplay").innerText = "Current Status: " + status;
+      document.getElementById("liveStatusDisplay").innerText = "Most Recent Update (in the last 6 hours): " + status;
       // Note: No 'sendAlerts' here anymore. The Google Script handles the emailing logic.
     });
 
