@@ -1,9 +1,9 @@
 body{
   /*General 'looks' of the website*/
   text-align: center;
-  background-color: #B5A633;
+  background-color: #3A5A40;
   font-family: 'Segoe UI', Tahoma, 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+  color: #bebebe;
   /*Margins*/
   padding-top: 50px;
   margin-left: 10%;
@@ -25,28 +25,28 @@ button{
   text-emphasis-color: #333333;
   padding: 10px 20px;
   font-size: 35px;
-  background-color: #6B6115; /*Slightly darker yellow for the button*/
+  background-color: #344E41;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 button:hover {
-  background-color: #d4bc00;
+  background-color: #588157;
 }
 
 /*Changes the size of the input Email box larger*/
-input[type="email"] {
+input[type="email"]{
   width: 60%;          /* Makes the box wider across the screen */
   padding: 30px;       /* Adds "tallness" and space inside the box */
   font-size: 35px;     /* Makes the text she types much larger */
-  border: 2px solid #6B6115; /* Matches your button color */
+  border: 2px solid #344E41; /* Matches your button color */
   border-radius: 8px;  /* Rounds the corners */
   margin-bottom: 20px; /* Adds space before the button starts */
   outline: none;       /* Clean look when clicking */
 }
 input::placeholder{
-  color: #888888;
+  color: #a87902;
   font-size: 35px;
 }
 
@@ -57,12 +57,3 @@ input::placeholder{
   margin-top: 20px;
 }
 
-/*
-img{
-  max-width: 80%;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-
-Add this in when you've got the images you want to insert (flowers)
-*/
