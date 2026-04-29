@@ -46,7 +46,7 @@ input[type="email"]{
   outline: none;       /* Clean look when clicking */
 }
 input::placeholder{
-  color: #a87902;
+  color: #888888;
   font-size: 35px;
 }
 
